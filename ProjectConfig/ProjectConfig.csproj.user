@@ -2,5 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ActiveDebugProfile>https</ActiveDebugProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\AllanBrenoMenezesSam\Source\Repos\WsysAllanSampaio\Config\.github\workflows\main.yml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
