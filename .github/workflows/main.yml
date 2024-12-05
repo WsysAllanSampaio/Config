@@ -18,7 +18,7 @@ jobs:
         dotnet-version: 8.x # Ajuste para sua versão do .NET
 
     - name: Publish Blazor WebAssembly
-      run: dotnet publish -c Release -o dist
+      run: dotnet publish ProjectConfig/ProjectConfig.csproj -c Release -o dist
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
