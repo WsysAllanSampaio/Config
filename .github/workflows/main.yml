@@ -1,27 +1,56 @@
-name: Build and Deploy Blazor WASM
+name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.x # Ajuste para sua versão do .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Publish Blazor WebAssembly
-      run: dotnet publish ProjectConfig/ProjectConfig.csproj -c Release -o dist
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+      - name: Install .NET Wasm Tools
+        run: dotnet workload install wasm-tools
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Publish .NET
+        run: dotnet publish ProjectConfig.csproj -c:Release -o docs --nologo
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs/wwwroot'
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
