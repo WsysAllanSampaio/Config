@@ -1,7 +1,49 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div style="margin-top: 100px;">
+    <p style="display: flex; justify-content: center; align-items: center;">
+        <a style="color:red; font-size:100px; font-weight:1000; margin-left: 20px;">@timeRemaining</a>
+    </p>
+</div>
+<div style="margin-top: 100px; font-size:30px;">
+    <p>Corre Matheus, você precisa comprar os pães de queijo!</p>
+    <p>Telefones do Anita:</p>
+    <p>☎️ 34551818</p>
+    <p>📱(47) 988347916</p>
+    <p style="font-size:30px;">Ou se preferir pode pedir <a href="https://maps.app.goo.gl/5prVD9mKVGYjrHUeA">aqui!</a></p>
+</div>
 
-Welcome to your new app.
+@code {
+    private DateTime endTime = new DateTime(2024, 12, 11, 17, 30, 0);
+    private string timeRemaining = string.Empty;
+    private Timer? timer;
+
+    protected override void OnInitialized()
+    {
+        UpdateTimeRemaining();
+        timer = new Timer(UpdateTimeRemaining, null, 0, 1000); // Atualiza a cada 1 segundo
+    }
+
+    private void UpdateTimeRemaining(object? state = null)
+    {
+        var now = DateTime.Now;
+        var remaining = endTime - now;
+
+        if (remaining.TotalSeconds > 0)
+        {
+            timeRemaining = $"{remaining.Hours:D2}:{remaining.Minutes:D2}:{remaining.Seconds:D2}";
+            InvokeAsync(StateHasChanged); // Atualiza a UI
+        }
+        else
+        {
+            timeRemaining = "Tempo esgotado!";
+            timer?.Dispose();
+        }
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}
